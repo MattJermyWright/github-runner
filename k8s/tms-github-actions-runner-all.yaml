@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tms-github-actions-runner
+  name: tms-github-actions-runner
+  namespace: tms-github-actions
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tms-github-actions-runner
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tms-github-actions-runner
+    spec:
+      containers:
+      - env:
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: gh-runner-env
+              key: github_token
+        # Repo goes
+        - name: GITHUB_REPO
+          value: https://github.com/some-repo/here
+        image: zahlen/github-runner:prod
+        imagePullPolicy: "Always"
+        name: tms-github-actions-runner
+        securityContext:
+          runAsUser: 999
+      restartPolicy: Always
+      imagePullSecrets:
+      - name: dockerhub-credentials
