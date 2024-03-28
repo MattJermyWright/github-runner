@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && apt-get clean \
     # Install poetry
-    && pip3 install poetry
+    && pip3 install poetry \
+    && npm install -g yarn jest
 
 # Add non-priv user
 RUN groupadd -r $LOCAL_USER && useradd -r -g $LOCAL_USER $LOCAL_USER && \
@@ -40,4 +41,4 @@ USER $LOCAL_USER
 COPY --chown=$LOCAL_USER:$LOCAL_USER entrypoint.sh .
 RUN chmod +x entrypoint.sh && chown -R $LOCAL_USER:$LOCAL_USER $LOCAL_HOME
 
-ENTRYPOINT ["./entrypoint.sh"]
+# ENTRYPOINT ["./entrypoint.sh"]
