@@ -41,4 +41,4 @@ USER $LOCAL_USER
 COPY --chown=$LOCAL_USER:$LOCAL_USER entrypoint.sh .
 RUN chmod +x entrypoint.sh && chown -R $LOCAL_USER:$LOCAL_USER $LOCAL_HOME
 
-# ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
