@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-builder
+  namespace: podman-builder-ci-pro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-builder
+  template:
+    metadata:
+      labels:
+        app: test-builder
+    spec:
+      containers:
+      - name: test-builder-podman
+        image: zahlen/podman-builder:prod
+        imagePullPolicy: "Always"
+        env:
+        - name: GITHUB_REPO
+          value: "https://github.com/hpe-dss/podman-builder-ci"
+        - name: HTTP_PROXY
+          value: "http://web-proxy.houston.hpecorp.net:8080"
+        - name: HTTPS_PROXY
+          value: "http://web-proxy.houston.hpecorp.net:8080"
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: builder-secret-env
+              key: GITHUB_TOKEN
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /dev/fuse
+          name: fuse
+      volumes:
+      - name: fuse
+        hostPath:
+          path: /dev/fuse
+      restartPolicy: Always
+      imagePullSecrets:
+      - name: dockerhub-credentials
